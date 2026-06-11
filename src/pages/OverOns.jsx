@@ -12,13 +12,24 @@ export default function OverOns() {
     <>
       <div className="page-hero">
         <div className="breadcrumb"><Link to="/">Home</Link><span className="sep">/</span><span>Over Ons</span></div>
-        <h1>Over Ons</h1>
+        <h1>Over ons</h1>
         <p>Bij Autocentrum Den Haag begrijpen we hoe belangrijk uw voertuig voor u is.</p>
       </div>
 
       <section className="section-dark">
         <div className="over-grid">
-          <div className="over-img-box">🏭</div>
+          <div className="over-img-box">
+            <iframe
+              title="Locatie Autocentrum Den Haag"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1226.15!2d4.33079!3d52.04771!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c5b5f7b7b7b7b7%3A0x0!2sWaterpas+92H%2C+2495+AM+Den+Haag!5e0!3m2!1snl!2snl!4v1700000000000"
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen=""
+              loading="eager"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
           <div className="over-text">
             <div className="eyebrow">Wie zijn wij</div>
             <h2>Uw betrouwbare partner in Den Haag</h2>
@@ -37,15 +48,15 @@ export default function OverOns() {
         <div className="stats-col">
           <div className="eyebrow">Onze cijfers</div>
           {stats.map(s => (
-            <div className="stat-item" key={s.label}>
-              <div className="s-ico">{s.ico}</div>
-              <div className="s-num">{s.num}</div>
-              <div><div className="s-label">{s.label}</div><div className="s-sub">{s.sub}</div></div>
+            <div className="stat-card" key={s.label}>
+              <div>
+                <div className="stat-num">{s.num}</div>
+                <div className="stat-label">{s.label}</div>
+              </div>
             </div>
           ))}
         </div>
         <div className="why-col">
-          <div className="why-placeholder">🔧</div>
           <div className="why-bg" />
           <div className="why-content">
             <div className="eyebrow">Onze missie</div>

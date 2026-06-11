@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import heroImg from '/images/hero.png';
+import heroImg from '/images/achtergrond.webp';
+import garageImg from '/images/garage.webp';
 
 const cars = [
   {
@@ -34,47 +35,56 @@ const cars = [
   },
 ];
 
+const IcoOnderhoud = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  </svg>
+)
+const IcoReparatie = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+  </svg>
+)
+const IcoRemmen = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/>
+  </svg>
+)
+const IcoBanden = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/>
+  </svg>
+)
+const IcoDiagnose = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </svg>
+)
+const IcoUitlaat = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14"/><path d="M5 12a7 7 0 0 0 7 7"/><path d="M5 12a7 7 0 0 1 7-7"/><path d="M19 12c0 3.87-3.13 7-7 7"/><line x1="19" y1="12" x2="23" y2="12"/>
+  </svg>
+)
+const IcoAccu = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+  </svg>
+)
+const IcoAirco = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2v20M2 6h20M2 18h20M6 2l6 4 6-4M6 22l6-4 6 4"/>
+  </svg>
+)
+
 const diensten = [
-  {
-    ico: '🔧',
-    title: 'Onderhoud',
-    desc: 'Periodiek onderhoud volgens fabrieksschema voor een optimale levensduur.',
-  },
-  {
-    ico: '🔩',
-    title: 'Reparatie',
-    desc: 'Van kleine reparaties tot complexe storingen, wij lossen het vakkundig op.',
-  },
-  {
-    ico: '🛑',
-    title: 'Remmen',
-    desc: 'Controle, reparatie en vervanging van remmen voor maximale veiligheid.',
-  },
-  {
-    ico: '🛞',
-    title: 'Banden & Velgen',
-    desc: 'Verkoop, montage en balanceren van banden en lichtmetalen velgen.',
-  },
-  {
-    ico: '🏎️',
-    title: 'Diagnose',
-    desc: 'Geavanceerde diagnoseapparatuur voor het snel vinden van storingen.',
-  },
-  {
-    ico: '⚙️',
-    title: 'Uitlaatsystemen',
-    desc: 'Reparatie en vervanging van uitlaten voor optimale prestaties en geluid.',
-  },
-  {
-    ico: '🔋',
-    title: 'Accu Service',
-    desc: 'Testen, vervangen en advies voor een betrouwbare start, elke keer.',
-  },
-  {
-    ico: '❄️',
-    title: 'Airco Service',
-    desc: 'Voor een optimaal werkende airconditioning en een fris interieur.',
-  },
+  { ico: <IcoOnderhoud />, title: 'Onderhoud', desc: 'Periodiek onderhoud volgens fabrieksschema voor een optimale levensduur.' },
+  { ico: <IcoReparatie />, title: 'Reparatie', desc: 'Van kleine reparaties tot complexe storingen, wij lossen het vakkundig op.' },
+  { ico: <IcoRemmen />, title: 'Remmen', desc: 'Controle, reparatie en vervanging van remmen voor maximale veiligheid.' },
+  { ico: <IcoBanden />, title: 'Banden & Velgen', desc: 'Verkoop, montage en balanceren van banden en lichtmetalen velgen.' },
+  { ico: <IcoDiagnose />, title: 'Diagnose', desc: 'Geavanceerde diagnoseapparatuur voor het snel vinden van storingen.' },
+  { ico: <IcoUitlaat />, title: 'Uitlaatsystemen', desc: 'Reparatie en vervanging van uitlaten voor optimale prestaties en geluid.' },
+  { ico: <IcoAccu />, title: 'Accu Service', desc: 'Testen, vervangen en advies voor een betrouwbare start, elke keer.' },
+  { ico: <IcoAirco />, title: 'Airco Service', desc: 'Voor een optimaal werkende airconditioning en een fris interieur.' },
 ];
 
 const stats = [
@@ -91,11 +101,9 @@ export default function Home() {
         <div className='hero-left'>
           <div className='hero-eyebrow'>PERFORMANCE. ZORG. VERTROUWEN.</div>
           <h1>
-            Meer dan
+            Auto's Kopen, Verkopen en Repareren:
             <br />
-            onderhoud.
-            <br />
-            Pure prestaties<span className='dot'>.</span>
+            Alles Onder Eén Dak<span className='dot'>!</span>
           </h1>
           <p>
             Van regulier onderhoud tot complexe reparaties;
@@ -106,37 +114,54 @@ export default function Home() {
             <Link to='/diensten' className='hero-btn'>
               Ontdek onze diensten →
             </Link>
-            <Link to='/contact' className='hero-btn hero-btn-ghost'>
-              Bekijk onze werkplaats
-            </Link>
           </div>
         </div>
         <div className='hero-right'>
           <img
             src={heroImg}
-            alt='Autocentrum Den Haag'
+            alt='Autocentrum Den Haag werkplaats'
+            width="1200"
+            height="800"
+            fetchpriority="high"
+            decoding="async"
             onError={(e) => (e.target.style.display = 'none')}
           />
         </div>
         <div className='hero-badges'>
           {[
             {
-              ico: '🛡️',
+              ico: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+              ),
               title: 'Ervaren specialisten',
               sub: 'Vaktechnisch personeel',
             },
             {
-              ico: '🔬',
+              ico: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+                </svg>
+              ),
               title: 'Moderne apparatuur',
               sub: 'De beste diagnosetools',
             },
             {
-              ico: '💰',
+              ico: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                </svg>
+              ),
               title: 'Eerlijke prijzen',
               sub: 'Transparant & duidelijk',
             },
             {
-              ico: '😊',
+              ico: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              ),
               title: 'Tevreden klanten',
               sub: '98% beveelt ons aan',
             },
@@ -152,10 +177,41 @@ export default function Home() {
         </div>
       </section>
 
+      <section className='diensten-section'>
+        <div className='diensten-header'>
+          <div className='eyebrow' style={{ color: 'var(--gold)' }}>
+            Onze diensten
+          </div>
+          <h2 className='diensten-title'>
+            Alles voor uw auto,
+            <br />
+            onder één dak.
+            <span className='title-bar' />
+          </h2>
+        </div>
+        <div className='diensten-grid-8'>
+          {diensten.map((d) => (
+            <Link to='/diensten' className='d-card' key={d.title}>
+              <div className='d-ico'>{d.ico}</div>
+              <div className='d-text'>
+                <h3>{d.title}</h3>
+                <p>{d.desc}</p>
+                <div className='d-arrow'>→</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <Link to='/diensten' className='btn-dark-solid'>
+            Bekijk alle diensten →
+          </Link>
+        </div>
+      </section>
+
       <section className='occasions-section'>
         <div className='section-row'>
           <div>
-            <div className='eyebrow'>Auto's te koop</div>
+            <div className='eyebrow'>Te koop</div>
             <h2 className='title-white'>
               Kwaliteitsoccasions
               <br />
@@ -175,7 +231,7 @@ export default function Home() {
                   alt={c.name}
                   style={{ objectPosition: c.imagePosition }}
                 />
-                <button className='car-fav'>♡</button>
+
               </div>
               <div className='car-body'>
                 <h3>{c.name}</h3>
@@ -208,39 +264,14 @@ export default function Home() {
         </div>
         <div className='cta-img-box'>
           <img
-            src={heroImg}
-            alt='Werkplaats impressie'
-            style={{ objectPosition: 'center 75%' }}
+            src={garageImg}
+            alt='Werkplaats impressie Autocentrum Den Haag'
+            width="800"
+            height="250"
+            loading="lazy"
+            decoding="async"
+            style={{ objectPosition: 'right 50%' }}
           />
-        </div>
-      </section>
-
-      <section className='diensten-section'>
-        <div className='diensten-header'>
-          <div className='eyebrow' style={{ color: 'var(--gold)' }}>
-            Diensten
-          </div>
-          <h2 className='diensten-title'>
-            Alles voor uw auto,
-            <br />
-            onder één dak.
-            <span className='title-bar' />
-          </h2>
-        </div>
-        <div className='diensten-grid-8'>
-          {diensten.map((d) => (
-            <Link to='/diensten' className='d-card' key={d.title}>
-              <div className='d-ico'>{d.ico}</div>
-              <h3>{d.title}</h3>
-              <p>{d.desc}</p>
-              <div className='d-arrow'>→</div>
-            </Link>
-          ))}
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <Link to='/diensten' className='btn-dark-solid'>
-            Bekijk alle diensten →
-          </Link>
         </div>
       </section>
 
@@ -251,7 +282,6 @@ export default function Home() {
           </div>
           {stats.map((s) => (
             <div className='stat-card' key={s.label}>
-              <span className='stat-ico'>{s.ico}</span>
               <div>
                 <div className='stat-num'>{s.num}</div>
                 <div className='stat-label'>{s.label}</div>
