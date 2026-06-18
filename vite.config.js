@@ -8,6 +8,7 @@ export default defineConfig({
     compression({ algorithm: 'gzip' }),
     compression({ algorithm: 'brotliCompress', ext: '.br' }),
   ],
+  base: '/autocentrum-react/',
   server: { port: 3000 },
   build: {
     minify: 'terser',

@@ -23,7 +23,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 body {
   font-family: 'Inter', sans-serif;
@@ -84,6 +84,7 @@ button {
   right: 0;
   bottom: 0;
   z-index: -1;
+  pointer-events: none;
   border-radius: 0px;
   background: transparent;
   box-shadow: none;
@@ -106,6 +107,8 @@ button {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .nav-logo {
   display: inline-block;
@@ -1691,7 +1694,7 @@ html, body { overflow-x: hidden; }
   /* ── STATS WHY (over ons) ── */
   .stats-why {
     grid-template-columns: 1fr !important;
-    padding: 0 16px 32px !important;
+    padding: 28px 16px 32px !important;
     gap: 16px !important;
   }
   .stats-col {
@@ -1830,7 +1833,7 @@ html, body { overflow-x: hidden; }
   .occasions-section,
   .diensten-section,
   .cta-strip { padding: 28px 16px !important; }
-  .stats-why { padding: 0 16px 28px !important; }
+  .stats-why { padding: 28px 16px 28px !important; }
 
   /* ── MISC ── */
   .page-hero h1 { font-size: 38px; }

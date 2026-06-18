@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import logo from '/images/logo.png';
 
 export default function Nav() {
@@ -7,6 +7,17 @@ export default function Nav() {
   const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const lastY = useRef(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogoClick = () => {
+    navigate('/');
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,9 +42,9 @@ export default function Nav() {
     <>
       <nav className={`site-nav${visible ? '' : ' nav-hidden'}${scrolled ? ' nav-scrolled' : ' nav-top'}`}>
         <div className='nav-inner'>
-          <Link to='/' className='nav-logo'>
+          <div className='nav-logo' onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
             <img src={logo} alt='Autocentrum Den Haag' width="160" height="48" />
-          </Link>
+          </div>
 
           <div className='nav-right'>
             <ul className='nav-links'>
