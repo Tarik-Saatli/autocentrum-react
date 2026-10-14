@@ -5,7 +5,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import OverOns from './pages/OverOns'
 import Diensten from './pages/Diensten'
-import Aanbod from './pages/Aanbod'
+import Aanbod from './pages/Te koop'
 import Contact from './pages/Contact'
 
 function ScrollToTop() {
