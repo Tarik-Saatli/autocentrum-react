@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import heroImg from '/images/achtergrond.webp';
 import garageImg from '/images/garage.webp';
 
+
+
 const cars = [
   {
     name: 'BMW 1 Serie',

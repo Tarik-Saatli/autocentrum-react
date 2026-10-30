@@ -7,6 +7,13 @@ import OverOns from './pages/OverOns'
 import Diensten from './pages/Diensten'
 import Aanbod from './pages/Te koop'
 import Contact from './pages/Contact'
+import CarsPage from './pages/CarsPage'
+import Login from './pages/login';
+import Register from './pages/Register';
+import AddCarForm from './components/AddCarForm'
+import ProtectedRoute from './components/ProtectedRoute';
+
+
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -24,11 +31,24 @@ export default function App() {
       <Nav />
       <main>
         <Routes>
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/toevoegenAuto"
+            element={
+              <ProtectedRoute>
+                <AddCarForm />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/" element={<Home />} />
           <Route path="/over-ons" element={<OverOns />} />
           <Route path="/diensten" element={<Diensten />} />
           <Route path="/aanbod" element={<Aanbod />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/cars" element={<CarsPage />} />
         </Routes>
       </main>
       <Footer />

@@ -36,6 +36,7 @@ export default function Nav() {
     { to: '/diensten', label: 'Onze diensten' },
     { to: '/aanbod', label: 'Te koop' },
     { to: '/contact', label: 'Contact' },
+     { to: '/cars', label: 'Carlist' },
   ];
 
   return (
