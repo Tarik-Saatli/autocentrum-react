@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useLayoutEffect } from 'react'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
@@ -8,8 +8,6 @@ import Diensten from './pages/Diensten'
 import Aanbod from './pages/Te koop'
 import Contact from './pages/Contact'
 import CarsPage from './pages/CarsPage'
-import Login from './pages/login';
-import Register from './pages/Register';
 import AddCarForm from './components/AddCarForm'
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -32,8 +30,8 @@ export default function App() {
       <main>
         <Routes>
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Navigate to="/cars" replace />} />
+          <Route path="/register" element={<Navigate to="/cars" replace />} />
           <Route
             path="/toevoegenAuto"
             element={

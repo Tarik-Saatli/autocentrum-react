@@ -1,22 +1,15 @@
 // frontend/src/context/AuthContext.jsx
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-
-useEffect(() => {
-  const savedToken = localStorage.getItem('token');
-  const savedEmail = localStorage.getItem('email');
-
-  if (savedToken && savedEmail) {
-    setToken(savedToken);
-    setUser({ email: savedEmail });
-  }
-}, []);
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [user, setUser] = useState(() => {
+    const savedEmail = localStorage.getItem('email');
+    return savedEmail ? { email: savedEmail } : null;
+  });
 
   const login = async (email, password) => {
     const response = await fetch('http://localhost:4000/api/auth/login', {

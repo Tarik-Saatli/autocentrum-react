@@ -39,6 +39,11 @@ function CarList() {
     };
 
     const handleDelete = async (id) => {
+        if (!token) {
+            setError('Je moet ingelogd zijn om een auto te verwijderen.');
+            return;
+        }
+
         try {
             const response = await fetch(`http://localhost:4000/api/cars/${id}`, {
                 method: 'DELETE',

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import logo from '/images/logo.png';
+import { useAuth } from '../context/AuthContext';
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -9,6 +10,7 @@ export default function Nav() {
   const lastY = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const { token, logout } = useAuth();
 
   const handleLogoClick = () => {
     navigate('/');
@@ -36,8 +38,23 @@ export default function Nav() {
     { to: '/diensten', label: 'Onze diensten' },
     { to: '/aanbod', label: 'Te koop' },
     { to: '/contact', label: 'Contact' },
-     { to: '/cars', label: 'Carlist' },
+    { to: '/cars', label: 'Carlist' },
+    ...(token
+      ? [{ action: logout, label: 'Uitloggen' }]
+      : [{ to: '/cars', label: 'Inloggen / registreren' }]),
   ];
+
+  const renderLink = (link) => (
+    <NavLink
+      key={link.to || link.label}
+      to={link.to || location.pathname}
+      end={link.to === '/'}
+      className={({ isActive }) => (isActive ? 'active' : '')}
+      onClick={link.action}
+    >
+      {link.label}
+    </NavLink>
+  );
 
   return (
     <>
@@ -50,27 +67,25 @@ export default function Nav() {
           <div className='nav-right'>
             <ul className='nav-links'>
               {links.map((l) => (
-                <li key={l.to}>
-                  <NavLink to={l.to} end={l.to === '/'} className={({ isActive }) => (isActive ? 'active' : '')}>
-                    {l.label}
-                  </NavLink>
-                </li>
+                <li key={l.to || l.label}>{renderLink(l)}</li>
               ))}
             </ul>
-            <div className='hamburger' onClick={() => setOpen(!open)}>
+            <button
+              type="button"
+              className='hamburger'
+              aria-label={open ? 'Menu sluiten' : 'Menu openen'}
+              aria-expanded={open}
+              onClick={() => setOpen(!open)}
+            >
               <span /><span /><span />
-            </div>
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Mobiel menu */}
       <div className={`mobile-menu${open ? ' open' : ''}`} onClick={() => setOpen(false)}>
-        {links.map((l) => (
-          <NavLink key={l.to} to={l.to} end={l.to === '/'} className={({ isActive }) => (isActive ? 'active' : '')}>
-            {l.label}
-          </NavLink>
-        ))}
+        {links.map(renderLink)}
       </div>
     </>
   );

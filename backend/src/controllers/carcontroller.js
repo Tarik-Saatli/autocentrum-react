@@ -44,17 +44,24 @@ export const getCarById = async (req, res) => {
 
 // POST nieuwe workout
 export const createCar = async (req, res) => {
-  // 1. Haal data uit request
-  const { name, price, milage } = req.body;
+  const { name, model, trim, bodyType, doors, fuel, transmission, price, milage } = req.body;
 
   try {
-    // 2. Maak workout in database
-    const car = await Car.create({ name, price, milage, userId: req.user._id });
+    const car = await Car.create({
+      name,
+      model,
+      trim,
+      bodyType,
+      doors,
+      fuel,
+      transmission,
+      price,
+      milage,
+      userId: req.user._id
+    });
 
-    // 3. Stuur terug
     res.status(201).json(car);
   } catch (error) {
-    // 4. Validatie fout? (bijv. title vergeten)
     res.status(400).json({ error: error.message });
   }
 };
@@ -69,10 +76,11 @@ export const updateCar = async (req, res) => {
   }
 
   try {
+    const { name, model, trim, bodyType, doors, fuel, transmission, price, milage } = req.body;
     const car = await Car.findByIdAndUpdate(
       id,
-      { ...req.body },
-      { new: true }
+      { name, model, trim, bodyType, doors, fuel, transmission, price, milage },
+      { new: true, runValidators: true }
     );
 
     if (!car) {
