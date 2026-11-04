@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import User from './src/models/User.js';
 import carRoutes from './src/routes/carRoutes.js';
 import authRoutes from './src/routes/authRoutes.js'; // Voeg deze regel toe
 
@@ -28,8 +29,30 @@ app.get('/', (req, res) => {
 });
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Verbonden met MongoDB');
+
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword || adminPassword.length < 6) {
+      throw new Error('Stel ADMIN_EMAIL en ADMIN_PASSWORD (minimaal 6 tekens) in backend/.env in.');
+    }
+
+    await User.updateMany(
+      { role: 'admin', email: { $ne: adminEmail } },
+      { $set: { role: 'user' } }
+    );
+
+    const admin = await User.findOne({ email: adminEmail });
+    if (admin) {
+      admin.role = 'admin';
+      await admin.save();
+    } else {
+      await User.create({ email: adminEmail, password: adminPassword, role: 'admin' });
+    }
+
+    console.log(`Adminaccount ingesteld voor ${adminEmail}`);
 
     // Start server ALLEEN als database gelukt is
     app.listen(PORT, () => {
@@ -37,5 +60,5 @@ mongoose.connect(process.env.MONGO_URI)
     });
   })
   .catch((error) => {
-    console.error('Database verbinding mislukt:', error.message);
+    console.error('Backend starten mislukt:', error.message);
   });

@@ -4,7 +4,8 @@ import EditCarForm from './EditCarForm';
 import { useAuth } from '../context/AuthContext';
 
 function CarList() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
+    const isAdmin = token && user?.role === 'admin';
     const [cars, setCars] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -39,8 +40,8 @@ function CarList() {
     };
 
     const handleDelete = async (id) => {
-        if (!token) {
-            setError('Je moet ingelogd zijn om een auto te verwijderen.');
+        if (!isAdmin) {
+            setError('Alleen een beheerder kan een auto verwijderen.');
             return;
         }
 
@@ -73,7 +74,7 @@ function CarList() {
 
     return (
         <div className="car-list">
-            {token && editing && (
+            {isAdmin && editing && (
                 <EditCarForm
                     car={editing}
                     onUpdated={handleUpdated}
@@ -86,8 +87,8 @@ function CarList() {
                     <Car
                         key={car._id}
                         car={car}
-                        onDelete={token ? handleDelete : undefined}
-                        onEdit={token ? setEditing : undefined}
+                        onDelete={isAdmin ? handleDelete : undefined}
+                        onEdit={isAdmin ? setEditing : undefined}
                     />
                 ))}
         </div>

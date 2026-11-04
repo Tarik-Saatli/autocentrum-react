@@ -8,7 +8,8 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [user, setUser] = useState(() => {
     const savedEmail = localStorage.getItem('email');
-    return savedEmail ? { email: savedEmail } : null;
+    const savedRole = localStorage.getItem('role');
+    return savedEmail ? { email: savedEmail, role: savedRole } : null;
   });
 
   const login = async (email, password) => {
@@ -21,26 +22,11 @@ export function AuthProvider({ children }) {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error);
 
-    setUser({ email: data.email });
+    setUser({ email: data.email, role: data.role });
     setToken(data.token);
     localStorage.setItem('token', data.token);
     localStorage.setItem('email', data.email);
-  };
-
-  const register = async (email, password) => {
-    const response = await fetch('http://localhost:4000/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error);
-
-    setUser({ email: data.email });
-    setToken(data.token);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('email', data.email);
+    localStorage.setItem('role', data.role);
   };
 
   const logout = () => {
@@ -48,10 +34,11 @@ export function AuthProvider({ children }) {
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -41,7 +41,7 @@ export default function Nav() {
     { to: '/cars', label: 'Carlist' },
     ...(token
       ? [{ action: logout, label: 'Uitloggen' }]
-      : [{ to: '/cars', label: 'Inloggen / registreren' }]),
+      : [{ to: '/cars', label: 'Inloggen' }]),
   ];
 
   const renderLink = (link) => (

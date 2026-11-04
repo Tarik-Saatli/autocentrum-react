@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function Login({ onSwitchToRegister }) {
+function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -50,14 +50,6 @@ function Login({ onSwitchToRegister }) {
       <button type="submit">Inloggen</button>
 
       {error && <p className="error">{error}</p>}
-      {onSwitchToRegister && (
-        <p className="auth-switch">
-          Nog geen account?{' '}
-          <button type="button" className="auth-switch-button" onClick={onSwitchToRegister}>
-            Registreren
-          </button>
-        </p>
-      )}
     </form>
   );
 }
