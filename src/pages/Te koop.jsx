@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import vehicleListings from '../data/vehicleListings'
 
 
 const merkModellen = {
@@ -44,15 +45,6 @@ const suggesties = merken.flatMap(m =>
   [m, ...merkModellen[m].map(model => `${m} ${model}`)]
 ).sort((a, b) => a.localeCompare(b, 'nl'))
 
-const autos = [
-  { emoji: '🚗', name: 'BMW 1 Serie', trim: '116i Sport Executive', year: '2016', fuel: 'Benzine', km: '98.765 km', kmNum: 98765, trans: 'Handgeschakeld', price: '€ 14.950,–', priceNum: 14950, merk: 'BMW' },
-  { emoji: '🚙', name: 'Audi A3 Sportback', trim: '1.4 TFSI CoD Ambition Pro Line', year: '2017', fuel: 'Benzine', km: '123.456 km', kmNum: 123456, trans: 'Handgeschakeld', price: '€ 16.950,–', priceNum: 16950, merk: 'Audi' },
-  { emoji: '🚘', name: 'Volkswagen Golf', trim: '1.0 TSI Comfortline', year: '2016', fuel: 'Benzine', km: '110.234 km', kmNum: 110234, trans: 'Handgeschakeld', price: '€ 15.950,–', priceNum: 15950, merk: 'Volkswagen' },
-  { emoji: '🚗', name: 'Mercedes-Benz C-Klasse', trim: '180 Business Solution', year: '2018', fuel: 'Benzine', km: '87.320 km', kmNum: 87320, trans: 'Automaat', price: '€ 21.500,–', priceNum: 21500, merk: 'Mercedes-Benz' },
-  { emoji: '🚙', name: 'Toyota Yaris', trim: '1.5 Hybrid Active', year: '2019', fuel: 'Hybride', km: '54.100 km', kmNum: 54100, trans: 'Automaat', price: '€ 17.750,–', priceNum: 17750, merk: 'Toyota' },
-  { emoji: '🚘', name: 'Ford Focus', trim: '1.0 EcoBoost Titanium', year: '2017', fuel: 'Benzine', km: '102.890 km', kmNum: 102890, trans: 'Handgeschakeld', price: '€ 12.950,–', priceNum: 12950, merk: 'Ford' },
-]
-
 export default function Aanbod() {
   const [zoekterm, setZoekterm] = useState('')
   const [brandstof, setBrandstof] = useState('')
@@ -69,21 +61,22 @@ export default function Aanbod() {
 
   const handleKey = e => { if (e.key === 'Enter') zoek() }
 
-  const gefilterd = autos.filter(c => {
+  const gefilterd = vehicleListings.filter(c => {
     if (actief.zoekterm) {
       const q = actief.zoekterm.toLowerCase()
-      if (!c.name.toLowerCase().includes(q) && !c.merk.toLowerCase().includes(q)) return false
+      if (!`${c.make} ${c.model} ${c.trim}`.toLowerCase().includes(q)) return false
     }
     if (actief.brandstof && c.fuel !== actief.brandstof) return false
     if (actief.jaar) {
-      const y = parseInt(c.year)
+      if (c.year == null) return false
+      const y = c.year
       if (actief.jaar === '2020+' && y < 2020) return false
       if (actief.jaar === '2018 – 2020' && (y < 2018 || y > 2020)) return false
       if (actief.jaar === '2015 – 2018' && (y < 2015 || y > 2018)) return false
       if (actief.jaar === 'Voor 2015' && y >= 2015) return false
     }
     if (actief.prijs) {
-      const p = c.priceNum
+      const p = c.price
       if (actief.prijs === 'Tot € 10.000' && p >= 10000) return false
       if (actief.prijs === '€ 10.000 – € 15.000' && (p < 10000 || p > 15000)) return false
       if (actief.prijs === '€ 15.000 – € 20.000' && (p < 15000 || p > 20000)) return false
@@ -97,7 +90,7 @@ export default function Aanbod() {
       <div className="page-hero">
         <div className="breadcrumb"><Link to="/">Home</Link><span className="sep">/</span><span>Te koop</span></div>
         <h1>Te koop</h1>
-        <p>Kwaliteitsoccasions met garantie — eerlijk geprijsd en vakkundig gecontroleerd.</p>
+        <p>{vehicleListings.length} occasions uit het online aanbod. Specificaties zijn overgenomen uit de advertenties.</p>
       </div>
 
       <div className="filter-bar">
@@ -131,6 +124,9 @@ export default function Aanbod() {
       </div>
 
       <section className="section-dark">
+        <p className="aanbod-notice">
+          Beschikbaarheid en voertuiggegevens kunnen wijzigen. APK-datums zijn overgenomen uit de advertenties en kunnen inmiddels zijn verlopen. Controleer de actuele status en gegevens bij de verkoper; sommige bronadvertenties bevatten ontbrekende of afwijkende informatie.
+        </p>
         {gefilterd.length === 0 ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.68)', padding: '40px 0' }}>
             Geen auto's gevonden met deze filters.
@@ -138,17 +134,41 @@ export default function Aanbod() {
         ) : (
           <div className="aanbod-grid">
             {gefilterd.map(c => (
-              <div className="car-card" key={c.name + c.trim}>
-                <div className="car-img"><div className="car-placeholder">{c.emoji}</div></div>
+              <article className="car-card" key={c.id}>
+                <div className="car-img car-placeholder" aria-hidden="true">
+                  <span>{c.make}</span>
+                  <strong>{c.model}</strong>
+                </div>
                 <div className="car-body">
-                  <h3>{c.name}</h3>
+                  <h3>{c.make} {c.model}</h3>
                   <div className="car-trim">{c.trim}</div>
                   <div className="car-specs">
-                    <span>{c.year}</span><span>{c.fuel}</span><span>{c.km}</span><span>{c.trans}</span>
+                    <span>{c.year ?? 'Bouwjaar niet vermeld'}</span>
+                    <span>{c.fuel}</span>
+                    <span>{c.mileage == null ? 'Kilometerstand niet vermeld' : `${c.mileage.toLocaleString('nl-NL')} km`}</span>
+                    <span>{c.transmission}</span>
                   </div>
-                  <div className="car-price">{c.price}</div>
+                  <div className="car-price">{new Intl.NumberFormat('nl-NL', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    maximumFractionDigits: 0,
+                  }).format(c.price)}</div>
+                  <details className="listing-details">
+                    <summary>Bekijk alle voertuiggegevens</summary>
+                    {c.groups.map(group => (
+                      <section className="listing-detail-group" key={group.title}>
+                        <h4>{group.title}</h4>
+                        <ul>
+                          {group.details.map(detail => <li key={detail}>{detail}</li>)}
+                        </ul>
+                      </section>
+                    ))}
+                    <a href={c.listingUrl} target="_blank" rel="noreferrer">
+                      Bekijk de oorspronkelijke advertentie
+                    </a>
+                  </details>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}

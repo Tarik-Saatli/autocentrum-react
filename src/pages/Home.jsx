@@ -1,41 +1,7 @@
 import { Link } from 'react-router-dom';
 import heroImg from '/images/achtergrond.webp';
 import garageImg from '/images/garage.webp';
-
-
-
-const cars = [
-  {
-    name: 'BMW 1 Serie',
-    trim: '116i Sport Executive',
-    year: '2016',
-    fuel: 'Benzine',
-    km: '98.765 km',
-    trans: 'Handgeschakeld',
-    price: '€ 14.950,–',
-    imagePosition: 'center 62%',
-  },
-  {
-    name: 'Audi A3 Sportback',
-    trim: '1.4 TFSI CoD Ambition Pro Line',
-    year: '2017',
-    fuel: 'Benzine',
-    km: '123.456 km',
-    trans: 'Handgeschakeld',
-    price: '€ 16.950,–',
-    imagePosition: 'center 44%',
-  },
-  {
-    name: 'Volkswagen Golf',
-    trim: '1.0 TSI Comfortline',
-    year: '2016',
-    fuel: 'Benzine',
-    km: '110.234 km',
-    trans: 'Handgeschakeld',
-    price: '€ 15.950,–',
-    imagePosition: 'center 28%',
-  },
-];
+import vehicleListings from '../data/vehicleListings';
 
 const IcoOnderhoud = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -225,26 +191,26 @@ export default function Home() {
           </Link>
         </div>
         <div className='cars-grid'>
-          {cars.map((c) => (
-            <div className='car-card' key={c.name}>
-              <div className='car-img'>
-                <img
-                  src={heroImg}
-                  alt={c.name}
-                  style={{ objectPosition: c.imagePosition }}
-                />
-
+          {vehicleListings.slice(0, 3).map((c) => (
+            <div className='car-card' key={c.id}>
+              <div className='car-img car-placeholder' aria-hidden='true'>
+                <span>{c.make}</span>
+                <strong>{c.model}</strong>
               </div>
               <div className='car-body'>
-                <h3>{c.name}</h3>
+                <h3>{c.make} {c.model}</h3>
                 <div className='car-trim'>{c.trim}</div>
                 <div className='car-specs'>
-                  <span>{c.year}</span>
+                  <span>{c.year ?? 'Bouwjaar niet vermeld'}</span>
                   <span>{c.fuel}</span>
-                  <span>{c.km}</span>
-                  <span>{c.trans}</span>
+                  <span>{c.mileage == null ? 'Kilometerstand niet vermeld' : `${c.mileage.toLocaleString('nl-NL')} km`}</span>
+                  <span>{c.transmission}</span>
                 </div>
-                <div className='car-price'>{c.price}</div>
+                <div className='car-price'>{new Intl.NumberFormat('nl-NL', {
+                  style: 'currency',
+                  currency: 'EUR',
+                  maximumFractionDigits: 0,
+                }).format(c.price)}</div>
               </div>
             </div>
           ))}
