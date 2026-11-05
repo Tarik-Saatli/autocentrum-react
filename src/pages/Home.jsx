@@ -192,7 +192,7 @@ export default function Home() {
         </div>
         <div className='cars-grid'>
           {vehicleListings.slice(0, 3).map((c) => (
-            <div className='car-card' key={c.id}>
+            <Link to={`/aanbod/${c.id}`} className='car-card car-card-link' key={c.id}>
               <div className='car-img car-placeholder' aria-hidden='true'>
                 <span>{c.make}</span>
                 <strong>{c.model}</strong>
@@ -212,7 +212,7 @@ export default function Home() {
                   maximumFractionDigits: 0,
                 }).format(c.price)}</div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

@@ -8,6 +8,7 @@ import Diensten from './pages/Diensten'
 import Aanbod from './pages/Te koop'
 import Contact from './pages/Contact'
 import CarsPage from './pages/CarsPage'
+import CarDetail from './pages/CarDetail'
 import AddCarForm from './components/AddCarForm'
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/over-ons" element={<OverOns />} />
           <Route path="/diensten" element={<Diensten />} />
           <Route path="/aanbod" element={<Aanbod />} />
+          <Route path="/aanbod/:id" element={<CarDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cars" element={<CarsPage />} />
         </Routes>

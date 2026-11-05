@@ -134,7 +134,7 @@ export default function Aanbod() {
         ) : (
           <div className="aanbod-grid">
             {gefilterd.map(c => (
-              <article className="car-card" key={c.id}>
+              <Link className="car-card car-card-link" key={c.id} to={`/aanbod/${c.id}`}>
                 <div className="car-img car-placeholder" aria-hidden="true">
                   <span>{c.make}</span>
                   <strong>{c.model}</strong>
@@ -153,22 +153,8 @@ export default function Aanbod() {
                     currency: 'EUR',
                     maximumFractionDigits: 0,
                   }).format(c.price)}</div>
-                  <details className="listing-details">
-                    <summary>Bekijk alle voertuiggegevens</summary>
-                    {c.groups.map(group => (
-                      <section className="listing-detail-group" key={group.title}>
-                        <h4>{group.title}</h4>
-                        <ul>
-                          {group.details.map(detail => <li key={detail}>{detail}</li>)}
-                        </ul>
-                      </section>
-                    ))}
-                    <a href={c.listingUrl} target="_blank" rel="noreferrer">
-                      Bekijk de oorspronkelijke advertentie
-                    </a>
-                  </details>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

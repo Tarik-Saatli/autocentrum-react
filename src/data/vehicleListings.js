@@ -9,7 +9,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Automaat',
     price: 13800,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-mercedes-benz-c-serisi-180-ambition-comfort',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -69,7 +68,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 2850,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-mini-one-pepper-2009',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -103,7 +101,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 4499,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-seat-exeo-st-1-8-tsi-stili',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -160,7 +157,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 3250,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-toyota-aygo-1-0-klima',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -213,7 +209,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 3300,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-seat-exeo-1-8-stil',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -270,7 +265,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 4175,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-renault-twingo-1-2-16v-collection',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -322,7 +316,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Automaat',
     price: 4450,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-volkswagen-passat-1-8-tfsi-comfortline',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -381,7 +374,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Automaat',
     price: 3199,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-volkswagen-polo-1-4-16v-comfortline',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -424,7 +416,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 5850,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-volkswagen-golf-1-2-tsi-motor-gereviseerd',
     groups: [
       {
         title: 'Voertuiggegevens',
@@ -473,7 +464,6 @@ const vehicleListings = [
     fuel: 'Benzine',
     transmission: 'Handgeschakeld',
     price: 4500,
-    listingUrl: 'https://www.autocentrumdenhaag.nl/urun-volkswagen-golf-1-6-optive-4',
     groups: [
       {
         title: 'Voertuiggegevens',
