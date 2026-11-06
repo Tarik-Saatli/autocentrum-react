@@ -11,6 +11,7 @@ import {
   deleteCar
 } from '../controllers/carcontroller.js';
 import { requireAuth } from '../middleware/requireAuth.js';
+import { uploadCarImages } from '../middleware/carImageUpload.js';
 
 
 const router = express.Router();
@@ -21,9 +22,9 @@ router.get('/', getAllCars);
 router.get('/legacy-import-status', getLegacyImportStatus);
 router.get('/:id', getCarById);
 
-router.post('/', requireAuth, createCar);
+router.post('/', requireAuth, uploadCarImages, createCar);
 router.post('/import-legacy', requireAuth, importLegacyCars);
-router.patch('/:id', requireAuth, updateCar);
+router.patch('/:id', requireAuth, uploadCarImages, updateCar);
 router.delete('/:id', requireAuth, deleteCar);
 
 

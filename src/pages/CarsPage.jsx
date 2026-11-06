@@ -8,12 +8,9 @@ import vehicleListings from '../data/vehicleListings';
 const CarsPage = () => {
     const { token, user, logout } = useAuth();
     const [carsRefreshKey, setCarsRefreshKey] = useState(0);
-    const [isImporting, setIsImporting] = useState(false);
-    const [importMessage, setImportMessage] = useState('');
     const [importError, setImportError] = useState('');
 
     const importLegacyListings = async () => {
-        setIsImporting(true);
         setImportError('');
 
         try {
@@ -31,14 +28,9 @@ const CarsPage = () => {
                 throw new Error(data.error || 'Bestaande advertenties overzetten is mislukt.');
             }
 
-            setImportMessage(data.alreadyImported
-                ? 'De bestaande advertenties zijn gesynchroniseerd.'
-                : `${data.imported} bestaande advertenties zijn toegevoegd aan CarList.`);
             setCarsRefreshKey(key => key + 1);
         } catch (error) {
             setImportError(error.message);
-        } finally {
-            setIsImporting(false);
         }
     };
 
@@ -54,20 +46,7 @@ const CarsPage = () => {
             {token && user?.role === 'admin' ? (
                 <>
                     <AddCarForm onCarAdded={() => setCarsRefreshKey(key => key + 1)} />
-                    <section className="car-form">
-                        <div className="car-form-heading">
-                            <span className="car-form-eyebrow">BESTAAND AANBOD</span>
-                            <h2>Advertenties synchroniseren</h2>
-                            <p>Het bestaande aanbod wordt automatisch aan CarList toegevoegd.</p>
-                        </div>
-                        <div className="car-form-actions">
-                            <button type="button" onClick={importLegacyListings} disabled={isImporting}>
-                                {isImporting ? 'Advertenties synchroniseren...' : 'Opnieuw synchroniseren'}
-                            </button>
-                        </div>
-                        {importMessage && <p>{importMessage}</p>}
-                        {importError && <p className="error">{importError}</p>}
-                    </section>
+                    {importError && <p className="error">{importError}</p>}
                 </>
             ) : token ? (
                 <section className="carlist-auth">

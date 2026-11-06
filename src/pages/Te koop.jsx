@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import vehicleListings from '../data/vehicleListings'
+import { getCarImageUrl } from '../components/CarPhotosField'
 
 
 const merkModellen = {
@@ -187,8 +188,9 @@ export default function Aanbod() {
             {gefilterd.map(c => (
               <Link className="car-card car-card-link" key={c._id} to={`/aanbod/${c._id}`}>
                 <div className="car-img car-placeholder" aria-hidden="true">
-                  <span>{c.name}</span>
-                  <strong>{c.model}</strong>
+                  {c.images?.length > 0
+                    ? <img src={getCarImageUrl(c.images[0])} alt={`${c.name} ${c.model}`} />
+                    : <><span>{c.name}</span><strong>{c.model}</strong></>}
                 </div>
                 <div className="car-body">
                   <h3>{c.name} {c.model}</h3>

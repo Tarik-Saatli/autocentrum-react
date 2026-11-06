@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CarPhotosField from './CarPhotosField';
 
 function EditCarForm({ car, onUpdated, onCancel }) {
     const [form, setForm] = useState({
@@ -16,6 +17,8 @@ function EditCarForm({ car, onUpdated, onCancel }) {
     });
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [photos, setPhotos] = useState([]);
+    const [removedPhotos, setRemovedPhotos] = useState([]);
     const { token } = useAuth();
 
     const handleChange = (event) => {
@@ -34,20 +37,24 @@ function EditCarForm({ car, onUpdated, onCancel }) {
 
         setIsSubmitting(true);
         try {
+            const body = new FormData();
+            Object.entries({
+                ...form,
+                bodyType: form.bodyType,
+                doors: form.doors === '' ? '' : Number(form.doors),
+                price: Number(form.price),
+                milage: form.milage,
+                year: form.year === '' ? '' : Number(form.year),
+            }).forEach(([name, value]) => body.append(name, String(value)));
+            body.append('removeImages', JSON.stringify(removedPhotos));
+            photos.forEach(photo => body.append('images', photo));
+
             const response = await fetch(`http://localhost:4000/api/cars/${car._id}`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    ...form,
-                    bodyType: form.bodyType || null,
-                    doors: form.doors === '' ? null : Number(form.doors),
-                    price: Number(form.price),
-                    milage: form.milage === '' ? null : Number(form.milage),
-                    year: form.year === '' ? null : Number(form.year),
-                }),
+                body,
             });
 
             const data = await response.json();
@@ -140,6 +147,14 @@ function EditCarForm({ car, onUpdated, onCancel }) {
                     <input name="year" type="number" min="1886" max={new Date().getFullYear() + 1} value={form.year} onChange={handleChange} />
                 </label>
             </div>
+
+            <CarPhotosField
+                files={photos}
+                onFilesChange={setPhotos}
+                existingPhotos={car.images ?? []}
+                removedPhotos={removedPhotos}
+                onRemovedPhotosChange={setRemovedPhotos}
+            />
 
             <div className="car-form-actions">
                 <button type="submit" disabled={isSubmitting}>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CarPhotosField from './CarPhotosField';
 
 function AddCarForm({ onCarAdded }) {
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ function AddCarForm({ onCarAdded }) {
   });
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photos, setPhotos] = useState([]);
   const { token } = useAuth();
 
   const handleChange = (event) => {
@@ -34,19 +36,22 @@ function AddCarForm({ onCarAdded }) {
 
     setIsSubmitting(true);
     try {
+      const body = new FormData();
+      Object.entries({
+        ...form,
+        doors: Number(form.doors),
+        price: Number(form.price),
+        milage: Number(form.milage),
+        year: form.year === '' ? '' : Number(form.year),
+      }).forEach(([name, value]) => body.append(name, String(value)));
+      photos.forEach(photo => body.append('images', photo));
+
       const response = await fetch('http://localhost:4000/api/cars', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...form,
-          doors: Number(form.doors),
-          price: Number(form.price),
-          milage: Number(form.milage),
-          year: form.year === '' ? null : Number(form.year),
-        }),
+        body,
       });
 
       const data = await response.json();
@@ -66,6 +71,7 @@ function AddCarForm({ onCarAdded }) {
         milage: '',
         year: '',
       });
+      setPhotos([]);
       onCarAdded?.(data);
     } catch (error) {
       setError(error.message);
@@ -151,6 +157,8 @@ function AddCarForm({ onCarAdded }) {
           <input name="year" type="number" min="1886" max={new Date().getFullYear() + 1} value={form.year} onChange={handleChange} />
         </label>
       </div>
+
+      <CarPhotosField files={photos} onFilesChange={setPhotos} />
 
       <div className="car-form-actions">
         <button type="submit" disabled={isSubmitting}>

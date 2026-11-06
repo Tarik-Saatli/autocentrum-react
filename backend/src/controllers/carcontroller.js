@@ -1,6 +1,22 @@
 import { Car } from '../models/Car.js';
 import { LegacyImport } from '../models/LegacyImport.js';
 import mongoose from 'mongoose';
+import { unlink } from 'node:fs/promises';
+import path from 'node:path';
+import uploadsDirectory from '../middleware/carImageUpload.js';
+
+const getUploadedImagePaths = req => (req.files ?? []).map(file => `/uploads/${file.filename}`);
+
+const removeUploadedFiles = async files => {
+  await Promise.all(files.map(file => unlink(file.path)));
+};
+
+const removeStoredImages = async imagePaths => {
+  await Promise.all(imagePaths.map(imagePath => {
+    const filename = path.basename(imagePath);
+    return unlink(path.join(uploadsDirectory, filename));
+  }));
+};
 
 // GET alle workouts
 export const getAllCars = async (req, res) => {
@@ -72,11 +88,17 @@ export const createCar = async (req, res) => {
       milage,
       year,
       groups,
+      images: getUploadedImagePaths(req),
       userId: req.user._id
     });
 
     res.status(201).json(car);
   } catch (error) {
+    try {
+      await removeUploadedFiles(req.files ?? []);
+    } catch (cleanupError) {
+      console.error('Geüploade autofoto opruimen mislukt:', cleanupError.message);
+    }
     res.status(400).json({ error: error.message });
   }
 };
@@ -149,18 +171,59 @@ export const updateCar = async (req, res) => {
 
   try {
     const { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year } = req.body;
+    let removedImages = [];
+    if (req.body.removeImages) {
+      removedImages = JSON.parse(req.body.removeImages);
+      if (!Array.isArray(removedImages) || removedImages.some(image => typeof image !== 'string')) {
+        await removeUploadedFiles(req.files ?? []);
+        return res.status(400).json({ error: 'De lijst met te verwijderen foto’s is ongeldig.' });
+      }
+    }
+
+    const existingCar = await Car.findById(id);
+    if (!existingCar) {
+      await removeUploadedFiles(req.files ?? []);
+      return res.status(404).json({ error: 'Car niet gevonden' });
+    }
+
+    const imagesToRemove = existingCar.images.filter(image => removedImages.includes(image));
+    const images = [
+      ...existingCar.images.filter(image => !imagesToRemove.includes(image)),
+      ...getUploadedImagePaths(req),
+    ];
+    if (images.length > 8) {
+      await removeUploadedFiles(req.files ?? []);
+      return res.status(400).json({ error: 'Je kunt maximaal 8 foto’s per auto bewaren.' });
+    }
+
     const car = await Car.findByIdAndUpdate(
       id,
-      { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year },
+      { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year, images },
       { new: true, runValidators: true }
     );
 
     if (!car) {
+      await removeUploadedFiles(req.files ?? []);
       return res.status(404).json({ error: 'Car niet gevonden' });
+    }
+
+    try {
+      await removeStoredImages(imagesToRemove);
+    } catch (error) {
+      console.error('Verwijderde autofoto opruimen mislukt:', error.message);
     }
 
     res.status(200).json(car);
   } catch (error) {
+    if (error instanceof SyntaxError) {
+      await removeUploadedFiles(req.files ?? []);
+      return res.status(400).json({ error: 'De lijst met te verwijderen foto’s is ongeldig.' });
+    }
+    try {
+      await removeUploadedFiles(req.files ?? []);
+    } catch (cleanupError) {
+      console.error('Geüploade autofoto opruimen mislukt:', cleanupError.message);
+    }
     res.status(400).json({ error: error.message });
   }
 };
@@ -179,6 +242,12 @@ export const deleteCar = async (req, res) => {
 
     if (!car) {
       return res.status(404).json({ error: 'Car niet gevonden' });
+    }
+
+    try {
+      await removeStoredImages(car.images);
+    } catch (error) {
+      console.error('Autofoto opruimen mislukt:', error.message);
     }
 
     res.status(200).json(car);

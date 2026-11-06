@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import vehicleListings from '../data/vehicleListings'
+import { getCarImageUrl } from '../components/CarPhotosField'
 
 const detailSectionTitles = [
   'Algemene gegevens',
@@ -138,7 +139,13 @@ function CarDetail() {
 
       <section className="section-dark car-detail-section">
         <div className="car-detail">
-          <div className="car-detail-gallery" role="img" aria-label="Ruimte gereserveerd voor autofoto's" />
+          <div className="car-detail-gallery">
+            {car.images?.length > 0
+              ? car.images.map((image, index) => (
+                <img key={image} src={getCarImageUrl(image)} alt={`${car.make} ${car.model} foto ${index + 1}`} />
+              ))
+              : <p>Er zijn nog geen foto’s beschikbaar.</p>}
+          </div>
 
           <div className="car-detail-heading">
             <div>

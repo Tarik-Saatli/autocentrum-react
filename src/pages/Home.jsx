@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import heroImg from '/images/achtergrond.webp';
 import garageImg from '/images/garage.webp';
 import vehicleListings from '../data/vehicleListings';
+import { getCarImageUrl } from '../components/CarPhotosField';
 
 const IcoOnderhoud = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -246,8 +247,9 @@ export default function Home() {
           ) : featuredCars.slice(0, 3).map((c) => (
             <Link to={`/aanbod/${c._id}`} className='car-card car-card-link' key={c._id}>
               <div className='car-img car-placeholder' aria-hidden='true'>
-                <span>{c.name}</span>
-                <strong>{c.model}</strong>
+                {c.images?.length > 0
+                  ? <img src={getCarImageUrl(c.images[0])} alt={`${c.name} ${c.model}`} />
+                  : <><span>{c.name}</span><strong>{c.model}</strong></>}
               </div>
               <div className='car-body'>
                 <h3>{c.name} {c.model}</h3>

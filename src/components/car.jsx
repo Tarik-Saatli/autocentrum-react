@@ -1,6 +1,15 @@
+import { getCarImageUrl } from './CarPhotosField';
+
 function Car({ car, onDelete, onEdit }) {
     return (
         <div className="car">
+            {car.images?.length > 0 && (
+                <img
+                    className="car-management-photo"
+                    src={getCarImageUrl(car.images[0])}
+                    alt={`Foto van ${car.name} ${car.model}`}
+                />
+            )}
             <div className="car-card-heading">
                 <div>
                     <h3>{car.name} {car.model}</h3>

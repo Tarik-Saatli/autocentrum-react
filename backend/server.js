@@ -2,13 +2,17 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import User from './src/models/User.js';
+import uploadsDirectory from './src/middleware/carImageUpload.js';
 import carRoutes from './src/routes/carRoutes.js';
 import authRoutes from './src/routes/authRoutes.js'; // Voeg deze regel toe
 
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const frontendDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist');
 
 // CORS toestaan voor frontend — VOOR alle andere middleware
 app.use(cors({
@@ -17,6 +21,8 @@ app.use(cors({
 
 // Middleware
 app.use(express.json());
+app.use('/uploads', express.static(uploadsDirectory));
+app.use(express.static(frontendDirectory));
 
 // Routes
 app.use('/api/cars', carRoutes);

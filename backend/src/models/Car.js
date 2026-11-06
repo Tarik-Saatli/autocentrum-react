@@ -61,6 +61,10 @@ const carSchema = new Schema({
       default: []
     }
   }],
+  images: {
+    type: [String],
+    default: []
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
