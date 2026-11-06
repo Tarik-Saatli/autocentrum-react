@@ -17,6 +17,18 @@ export const getAllCars = async (req, res) => {
   }
 };
 
+export const getLegacyImportStatus = async (req, res) => {
+  try {
+    const legacyImport = await LegacyImport.findOne({ key: 'vehicle-listings-v1' });
+    res.status(200).json({
+      imported: Boolean(legacyImport),
+      importedCount: legacyImport?.importedCount ?? 0
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // GET één workout op basis van ID
 export const getCarById = async (req, res) => {
   // 1. Haal ID uit URL
@@ -73,7 +85,7 @@ export const importLegacyCars = async (req, res) => {
   const migrationKey = 'vehicle-listings-v1';
   const listings = req.body?.listings;
 
-  if (!Array.isArray(listings) || listings.some(listing =>
+  if (!Array.isArray(listings) || listings.length === 0 || listings.some(listing =>
     !listing?.id || !listing.make || !listing.model || !listing.trim
   )) {
     return res.status(400).json({ error: 'De bestaande advertenties zijn ongeldig.' });

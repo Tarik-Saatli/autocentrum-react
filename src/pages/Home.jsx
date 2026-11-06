@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import heroImg from '/images/achtergrond.webp';
 import garageImg from '/images/garage.webp';
+import vehicleListings from '../data/vehicleListings';
 
 const IcoOnderhoud = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -64,20 +65,31 @@ const stats = [
 
 export default function Home() {
   const [cars, setCars] = useState([]);
+  const [legacyImported, setLegacyImported] = useState(false);
   const [isLoadingCars, setIsLoadingCars] = useState(true);
   const [carsError, setCarsError] = useState('');
 
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/cars');
-        const data = await response.json();
+        const [response, importStatusResponse] = await Promise.all([
+          fetch('http://localhost:4000/api/cars'),
+          fetch('http://localhost:4000/api/cars/legacy-import-status'),
+        ]);
+        const [data, importStatus] = await Promise.all([
+          response.json(),
+          importStatusResponse.json(),
+        ]);
 
         if (!response.ok) {
           throw new Error(data.error || "Auto's ophalen is mislukt.");
         }
+        if (!importStatusResponse.ok) {
+          throw new Error(importStatus.error || 'De status van het bestaande aanbod ophalen is mislukt.');
+        }
 
         setCars(data);
+        setLegacyImported(importStatus.imported);
       } catch (error) {
         setCarsError(error.message);
       } finally {
@@ -87,6 +99,17 @@ export default function Home() {
 
     fetchCars();
   }, []);
+
+  const legacyIds = new Set(vehicleListings.map(car => car.id));
+  const legacyCars = vehicleListings.map(car => ({
+      ...car,
+      _id: car.id,
+      name: car.make,
+      milage: car.mileage,
+  }));
+  const featuredCars = legacyImported
+    ? cars
+    : [...legacyCars, ...cars.filter(car => !legacyIds.has(car.legacyId))];
 
   return (
     <>
@@ -216,13 +239,11 @@ export default function Home() {
           </Link>
         </div>
         <div className='cars-grid'>
-          {carsError ? (
-            <p className='error'>{carsError}</p>
-          ) : isLoadingCars ? (
-            <p>Auto's laden...</p>
-          ) : cars.length === 0 ? (
+          {carsError && <p className='error'>Nieuwe auto's laden is mislukt: {carsError}</p>}
+          {isLoadingCars && <p>Nieuwe auto's laden...</p>}
+          {featuredCars.length === 0 ? (
             <p>Er staan momenteel geen auto's te koop.</p>
-          ) : cars.slice(0, 3).map((c) => (
+          ) : featuredCars.slice(0, 3).map((c) => (
             <Link to={`/aanbod/${c._id}`} className='car-card car-card-link' key={c._id}>
               <div className='car-img car-placeholder' aria-hidden='true'>
                 <span>{c.name}</span>

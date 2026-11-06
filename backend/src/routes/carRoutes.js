@@ -3,6 +3,7 @@
 import express from 'express';
 import { 
   getAllCars, 
+  getLegacyImportStatus,
   getCarById, 
   createCar,
   importLegacyCars,
@@ -17,6 +18,7 @@ const router = express.Router();
 
 // Auto's bekijken is openbaar.
 router.get('/', getAllCars);
+router.get('/legacy-import-status', getLegacyImportStatus);
 router.get('/:id', getCarById);
 
 router.post('/', requireAuth, createCar);

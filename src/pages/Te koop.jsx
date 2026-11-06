@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import vehicleListings from '../data/vehicleListings'
 
 
 const merkModellen = {
@@ -46,6 +47,7 @@ const suggesties = merken.flatMap(m =>
 
 export default function Aanbod() {
   const [cars, setCars] = useState([])
+  const [legacyImported, setLegacyImported] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [zoekterm, setZoekterm] = useState('')
@@ -57,14 +59,24 @@ export default function Aanbod() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/cars')
-        const data = await response.json()
+        const [response, importStatusResponse] = await Promise.all([
+          fetch('http://localhost:4000/api/cars'),
+          fetch('http://localhost:4000/api/cars/legacy-import-status'),
+        ])
+        const [data, importStatus] = await Promise.all([
+          response.json(),
+          importStatusResponse.json(),
+        ])
 
         if (!response.ok) {
           throw new Error(data.error || "Auto's ophalen is mislukt.")
         }
+        if (!importStatusResponse.ok) {
+          throw new Error(importStatus.error || 'De status van het bestaande aanbod ophalen is mislukt.')
+        }
 
         setCars(data)
+        setLegacyImported(importStatus.imported)
       } catch (fetchError) {
         setError(fetchError.message)
       } finally {
@@ -84,7 +96,18 @@ export default function Aanbod() {
 
   const handleKey = e => { if (e.key === 'Enter') zoek() }
 
-  const gefilterd = cars.filter(c => {
+  const legacyCars = vehicleListings.map(car => ({
+    ...car,
+    _id: car.id,
+    name: car.make,
+    milage: car.mileage,
+  }))
+  const legacyIds = new Set(vehicleListings.map(car => car.id))
+  const aanbod = legacyImported
+    ? cars
+    : [...legacyCars, ...cars.filter(car => !legacyIds.has(car.legacyId))]
+
+  const gefilterd = aanbod.filter(c => {
     if (actief.zoekterm) {
       const q = actief.zoekterm.toLowerCase()
       if (!`${c.name} ${c.model} ${c.trim}`.toLowerCase().includes(q)) return false
@@ -113,7 +136,13 @@ export default function Aanbod() {
       <div className="page-hero">
         <div className="breadcrumb"><Link to="/">Home</Link><span className="sep">/</span><span>Te koop</span></div>
         <h1>Te koop</h1>
-        <p>{cars.length} auto's in het actuele aanbod.</p>
+        <p>
+          {error
+            ? 'Het actuele aanbod is niet beschikbaar.'
+            : isLoading
+              ? 'Aanbod laden...'
+              : `${aanbod.length} auto's in het actuele aanbod.`}
+        </p>
       </div>
 
       <div className="filter-bar">
@@ -147,11 +176,9 @@ export default function Aanbod() {
       </div>
 
       <section className="section-dark">
-        {isLoading ? (
-          <p className="aanbod-notice">Auto's laden...</p>
-        ) : error ? (
-          <p className="error">Er ging iets mis: {error}</p>
-        ) : gefilterd.length === 0 ? (
+        {error && <p className="error">Nieuwe auto's laden is mislukt: {error}</p>}
+        {isLoading && <p className="aanbod-notice">Nieuwe auto's laden...</p>}
+        {gefilterd.length === 0 ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.68)', padding: '40px 0' }}>
             Geen auto's gevonden met deze filters.
           </p>
