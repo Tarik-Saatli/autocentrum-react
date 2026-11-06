@@ -1,4 +1,5 @@
 import { Car } from '../models/Car.js';
+import { LegacyImport } from '../models/LegacyImport.js';
 import mongoose from 'mongoose';
 
 // GET alle workouts
@@ -44,7 +45,7 @@ export const getCarById = async (req, res) => {
 
 // POST nieuwe workout
 export const createCar = async (req, res) => {
-  const { name, model, trim, bodyType, doors, fuel, transmission, price, milage } = req.body;
+  const { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year, groups } = req.body;
 
   try {
     const car = await Car.create({
@@ -57,12 +58,71 @@ export const createCar = async (req, res) => {
       transmission,
       price,
       milage,
+      year,
+      groups,
       userId: req.user._id
     });
 
     res.status(201).json(car);
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+
+export const importLegacyCars = async (req, res) => {
+  const migrationKey = 'vehicle-listings-v1';
+  const listings = req.body?.listings;
+
+  if (!Array.isArray(listings) || listings.some(listing =>
+    !listing?.id || !listing.make || !listing.model || !listing.trim
+  )) {
+    return res.status(400).json({ error: 'De bestaande advertenties zijn ongeldig.' });
+  }
+
+  try {
+    const previousImport = await LegacyImport.findOne({ key: migrationKey });
+    if (previousImport) {
+      return res.status(200).json({
+        alreadyImported: true,
+        imported: previousImport.importedCount
+      });
+    }
+
+    const cars = await Promise.all(listings.map(listing => Car.findOneAndUpdate(
+      { legacyId: listing.id },
+      {
+        $setOnInsert: {
+          name: listing.make,
+          model: listing.model,
+          trim: listing.trim,
+          year: listing.year ?? null,
+          milage: listing.mileage ?? null,
+          fuel: listing.fuel,
+          transmission: listing.transmission,
+          price: listing.price,
+          legacyId: listing.id,
+          groups: listing.groups ?? [],
+          userId: req.user._id
+        }
+      },
+      { new: true, upsert: true, runValidators: true }
+    )));
+
+    try {
+      await LegacyImport.create({ key: migrationKey, importedCount: cars.length });
+    } catch (error) {
+      if (error.code !== 11000) {
+        throw error;
+      }
+    }
+
+    const completedImport = await LegacyImport.findOne({ key: migrationKey });
+    res.status(200).json({
+      alreadyImported: cars.length === 0,
+      imported: completedImport.importedCount
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -76,10 +136,10 @@ export const updateCar = async (req, res) => {
   }
 
   try {
-    const { name, model, trim, bodyType, doors, fuel, transmission, price, milage } = req.body;
+    const { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year } = req.body;
     const car = await Car.findByIdAndUpdate(
       id,
-      { name, model, trim, bodyType, doors, fuel, transmission, price, milage },
+      { name, model, trim, bodyType, doors, fuel, transmission, price, milage, year },
       { new: true, runValidators: true }
     );
 

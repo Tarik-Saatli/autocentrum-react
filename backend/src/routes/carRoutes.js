@@ -5,6 +5,7 @@ import {
   getAllCars, 
   getCarById, 
   createCar,
+  importLegacyCars,
   updateCar,
   deleteCar
 } from '../controllers/carcontroller.js';
@@ -19,6 +20,7 @@ router.get('/', getAllCars);
 router.get('/:id', getCarById);
 
 router.post('/', requireAuth, createCar);
+router.post('/import-legacy', requireAuth, importLegacyCars);
 router.patch('/:id', requireAuth, updateCar);
 router.delete('/:id', requireAuth, deleteCar);
 

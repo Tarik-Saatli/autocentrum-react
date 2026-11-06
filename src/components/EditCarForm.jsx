@@ -12,6 +12,7 @@ function EditCarForm({ car, onUpdated, onCancel }) {
         transmission: car.transmission || '',
         price: String(car.price ?? ''),
         milage: String(car.milage ?? ''),
+        year: car.year == null ? '' : String(car.year),
     });
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,9 +42,11 @@ function EditCarForm({ car, onUpdated, onCancel }) {
                 },
                 body: JSON.stringify({
                     ...form,
-                    doors: Number(form.doors),
+                    bodyType: form.bodyType || null,
+                    doors: form.doors === '' ? null : Number(form.doors),
                     price: Number(form.price),
-                    milage: Number(form.milage),
+                    milage: form.milage === '' ? null : Number(form.milage),
+                    year: form.year === '' ? null : Number(form.year),
                 }),
             });
 
@@ -83,7 +86,7 @@ function EditCarForm({ car, onUpdated, onCancel }) {
                 </label>
                 <label className="car-form-field">
                     <span>Carrosserie</span>
-                    <select name="bodyType" value={form.bodyType} onChange={handleChange} required>
+                    <select name="bodyType" value={form.bodyType} onChange={handleChange}>
                         <option value="">Selecteer carrosserie</option>
                         <option value="Hatchback">Hatchback</option>
                         <option value="Sedan">Sedan</option>
@@ -97,7 +100,7 @@ function EditCarForm({ car, onUpdated, onCancel }) {
                 </label>
                 <label className="car-form-field">
                     <span>Aantal deuren</span>
-                    <select name="doors" value={form.doors} onChange={handleChange} required>
+                    <select name="doors" value={form.doors} onChange={handleChange}>
                         <option value="">Selecteer aantal</option>
                         {[2, 3, 4, 5].map(doors => (
                             <option key={doors} value={doors}>{doors} deuren</option>
@@ -130,7 +133,11 @@ function EditCarForm({ car, onUpdated, onCancel }) {
                 </label>
                 <label className="car-form-field">
                     <span>Kilometerstand</span>
-                    <input name="milage" type="number" min="0" value={form.milage} onChange={handleChange} required />
+                    <input name="milage" type="number" min="0" value={form.milage} onChange={handleChange} />
+                </label>
+                <label className="car-form-field">
+                    <span>Bouwjaar</span>
+                    <input name="year" type="number" min="1886" max={new Date().getFullYear() + 1} value={form.year} onChange={handleChange} />
                 </label>
             </div>
 

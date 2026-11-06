@@ -12,6 +12,7 @@ function AddCarForm({ onCarAdded }) {
     transmission: '',
     price: '',
     milage: '',
+    year: '',
   });
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,6 +45,7 @@ function AddCarForm({ onCarAdded }) {
           doors: Number(form.doors),
           price: Number(form.price),
           milage: Number(form.milage),
+          year: form.year === '' ? null : Number(form.year),
         }),
       });
 
@@ -62,6 +64,7 @@ function AddCarForm({ onCarAdded }) {
         transmission: '',
         price: '',
         milage: '',
+        year: '',
       });
       onCarAdded?.(data);
     } catch (error) {
@@ -142,6 +145,10 @@ function AddCarForm({ onCarAdded }) {
         <label className="car-form-field">
           <span>Kilometerstand</span>
           <input name="milage" type="number" min="0" value={form.milage} onChange={handleChange} required />
+        </label>
+        <label className="car-form-field">
+          <span>Bouwjaar</span>
+          <input name="year" type="number" min="1886" max={new Date().getFullYear() + 1} value={form.year} onChange={handleChange} />
         </label>
       </div>
 

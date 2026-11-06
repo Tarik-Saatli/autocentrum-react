@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import heroImg from '/images/achtergrond.webp';
 import garageImg from '/images/garage.webp';
-import vehicleListings from '../data/vehicleListings';
 
 const IcoOnderhoud = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -63,6 +63,31 @@ const stats = [
 ];
 
 export default function Home() {
+  const [cars, setCars] = useState([]);
+  const [isLoadingCars, setIsLoadingCars] = useState(true);
+  const [carsError, setCarsError] = useState('');
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/cars');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Auto's ophalen is mislukt.");
+        }
+
+        setCars(data);
+      } catch (error) {
+        setCarsError(error.message);
+      } finally {
+        setIsLoadingCars(false);
+      }
+    };
+
+    fetchCars();
+  }, []);
+
   return (
     <>
       <section className='hero'>
@@ -191,19 +216,25 @@ export default function Home() {
           </Link>
         </div>
         <div className='cars-grid'>
-          {vehicleListings.slice(0, 3).map((c) => (
-            <Link to={`/aanbod/${c.id}`} className='car-card car-card-link' key={c.id}>
+          {carsError ? (
+            <p className='error'>{carsError}</p>
+          ) : isLoadingCars ? (
+            <p>Auto's laden...</p>
+          ) : cars.length === 0 ? (
+            <p>Er staan momenteel geen auto's te koop.</p>
+          ) : cars.slice(0, 3).map((c) => (
+            <Link to={`/aanbod/${c._id}`} className='car-card car-card-link' key={c._id}>
               <div className='car-img car-placeholder' aria-hidden='true'>
-                <span>{c.make}</span>
+                <span>{c.name}</span>
                 <strong>{c.model}</strong>
               </div>
               <div className='car-body'>
-                <h3>{c.make} {c.model}</h3>
+                <h3>{c.name} {c.model}</h3>
                 <div className='car-trim'>{c.trim}</div>
                 <div className='car-specs'>
                   <span>{c.year ?? 'Bouwjaar niet vermeld'}</span>
                   <span>{c.fuel}</span>
-                  <span>{c.mileage == null ? 'Kilometerstand niet vermeld' : `${c.mileage.toLocaleString('nl-NL')} km`}</span>
+                  <span>{c.milage == null ? 'Kilometerstand niet vermeld' : `${Number(c.milage).toLocaleString('nl-NL')} km`}</span>
                   <span>{c.transmission}</span>
                 </div>
                 <div className='car-price'>{new Intl.NumberFormat('nl-NL', {

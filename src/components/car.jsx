@@ -19,7 +19,10 @@ function Car({ car, onDelete, onEdit }) {
                 {car.doors && <div><dt>Deuren</dt><dd>{car.doors}</dd></div>}
                 {car.fuel && <div><dt>Brandstof</dt><dd>{car.fuel}</dd></div>}
                 {car.transmission && <div><dt>Transmissie</dt><dd>{car.transmission}</dd></div>}
-                <div><dt>Kilometerstand</dt><dd>{Number(car.milage).toLocaleString('nl-NL')} km</dd></div>
+                <div>
+                    <dt>Kilometerstand</dt>
+                    <dd>{car.milage == null ? 'Niet vermeld' : `${Number(car.milage).toLocaleString('nl-NL')} km`}</dd>
+                </div>
             </dl>
 
             {(onEdit || onDelete) && (

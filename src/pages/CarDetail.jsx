@@ -1,4 +1,5 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import vehicleListings from '../data/vehicleListings'
 
 const detailSectionTitles = [
@@ -33,7 +34,87 @@ function getDetailSections(car) {
 
 function CarDetail() {
   const { id } = useParams()
-  const car = vehicleListings.find(listing => listing.id === id)
+  const legacyCar = vehicleListings.find(listing => listing.id === id)
+  const [apiCar, setApiCar] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (vehicleListings.some(listing => listing.id === id)) {
+      setApiCar(null)
+      setError('')
+      setIsLoading(false)
+      return () => {
+        cancelled = true
+      }
+    }
+
+    const fetchCar = async () => {
+      setIsLoading(true)
+      setError('')
+      setApiCar(null)
+
+      try {
+        const response = await fetch(`http://localhost:4000/api/cars/${id}`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Auto ophalen is mislukt.')
+        }
+
+        if (!cancelled) {
+          setApiCar(data)
+        }
+      } catch (fetchError) {
+        if (!cancelled) {
+          setError(fetchError.message)
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    fetchCar()
+
+    return () => {
+      cancelled = true
+    }
+  }, [id])
+
+  const car = legacyCar || (apiCar && {
+    ...apiCar,
+    make: apiCar.name,
+    mileage: apiCar.milage,
+    groups: apiCar.groups?.length ? apiCar.groups : [{
+      title: 'Voertuiggegevens',
+      details: [
+        ...(apiCar.year == null ? [] : [`Bouwjaar: ${apiCar.year}`]),
+        ...(apiCar.bodyType ? [`Carrosserie: ${apiCar.bodyType}`] : []),
+        ...(apiCar.doors ? [`${apiCar.doors} deuren`] : []),
+        ...(apiCar.milage == null ? [] : [`Kilometerstand: ${Number(apiCar.milage).toLocaleString('nl-NL')} km`]),
+        `Brandstof: ${apiCar.fuel}`,
+        `Transmissie: ${apiCar.transmission}`,
+      ],
+    }],
+  })
+
+  if (isLoading) {
+    return <p className="error">Auto laden...</p>
+  }
+
+  if (error) {
+    return (
+      <div className="page-hero">
+        <h1>Auto niet beschikbaar</h1>
+        <p>{error}</p>
+        <Link to="/aanbod">Terug naar alle auto's</Link>
+      </div>
+    )
+  }
 
   if (!car) {
     return <Navigate to="/aanbod" replace />

@@ -14,8 +14,11 @@ const carSchema = new Schema({
     required: true
   },
   milage: {
+    type: Number
+  },
+  year: {
     type: Number,
-    required: true
+    min: 1886
   },
   model: {
     type: String,
@@ -28,12 +31,10 @@ const carSchema = new Schema({
     trim: true
   },
   bodyType: {
-    type: String,
-    required: true
+    type: String
   },
   doors: {
     type: Number,
-    required: true,
     min: 2,
     max: 5
   },
@@ -45,6 +46,21 @@ const carSchema = new Schema({
     type: String,
     required: true
   },
+  legacyId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  groups: [{
+    title: {
+      type: String,
+      required: true
+    },
+    details: {
+      type: [String],
+      default: []
+    }
+  }],
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

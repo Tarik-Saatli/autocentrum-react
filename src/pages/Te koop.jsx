@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import vehicleListings from '../data/vehicleListings'
+import { useEffect, useState } from 'react'
 
 
 const merkModellen = {
@@ -46,11 +45,35 @@ const suggesties = merken.flatMap(m =>
 ).sort((a, b) => a.localeCompare(b, 'nl'))
 
 export default function Aanbod() {
+  const [cars, setCars] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
   const [zoekterm, setZoekterm] = useState('')
   const [brandstof, setBrandstof] = useState('')
   const [prijs, setPrijs] = useState('')
   const [jaar, setJaar] = useState('')
   const [actief, setActief] = useState({ zoekterm: '', brandstof: '', prijs: '', jaar: '' })
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/cars')
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || "Auto's ophalen is mislukt.")
+        }
+
+        setCars(data)
+      } catch (fetchError) {
+        setError(fetchError.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCars()
+  }, [])
 
   const zoek = () => setActief({ zoekterm, brandstof, prijs, jaar })
 
@@ -61,10 +84,10 @@ export default function Aanbod() {
 
   const handleKey = e => { if (e.key === 'Enter') zoek() }
 
-  const gefilterd = vehicleListings.filter(c => {
+  const gefilterd = cars.filter(c => {
     if (actief.zoekterm) {
       const q = actief.zoekterm.toLowerCase()
-      if (!`${c.make} ${c.model} ${c.trim}`.toLowerCase().includes(q)) return false
+      if (!`${c.name} ${c.model} ${c.trim}`.toLowerCase().includes(q)) return false
     }
     if (actief.brandstof && c.fuel !== actief.brandstof) return false
     if (actief.jaar) {
@@ -90,7 +113,7 @@ export default function Aanbod() {
       <div className="page-hero">
         <div className="breadcrumb"><Link to="/">Home</Link><span className="sep">/</span><span>Te koop</span></div>
         <h1>Te koop</h1>
-        <p>{vehicleListings.length} occasions uit het online aanbod. Specificaties zijn overgenomen uit de advertenties.</p>
+        <p>{cars.length} auto's in het actuele aanbod.</p>
       </div>
 
       <div className="filter-bar">
@@ -124,28 +147,29 @@ export default function Aanbod() {
       </div>
 
       <section className="section-dark">
-        <p className="aanbod-notice">
-          Beschikbaarheid en voertuiggegevens kunnen wijzigen. APK-datums zijn overgenomen uit de advertenties en kunnen inmiddels zijn verlopen. Controleer de actuele status en gegevens bij de verkoper; sommige bronadvertenties bevatten ontbrekende of afwijkende informatie.
-        </p>
-        {gefilterd.length === 0 ? (
+        {isLoading ? (
+          <p className="aanbod-notice">Auto's laden...</p>
+        ) : error ? (
+          <p className="error">Er ging iets mis: {error}</p>
+        ) : gefilterd.length === 0 ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.68)', padding: '40px 0' }}>
             Geen auto's gevonden met deze filters.
           </p>
         ) : (
           <div className="aanbod-grid">
             {gefilterd.map(c => (
-              <Link className="car-card car-card-link" key={c.id} to={`/aanbod/${c.id}`}>
+              <Link className="car-card car-card-link" key={c._id} to={`/aanbod/${c._id}`}>
                 <div className="car-img car-placeholder" aria-hidden="true">
-                  <span>{c.make}</span>
+                  <span>{c.name}</span>
                   <strong>{c.model}</strong>
                 </div>
                 <div className="car-body">
-                  <h3>{c.make} {c.model}</h3>
+                  <h3>{c.name} {c.model}</h3>
                   <div className="car-trim">{c.trim}</div>
                   <div className="car-specs">
                     <span>{c.year ?? 'Bouwjaar niet vermeld'}</span>
                     <span>{c.fuel}</span>
-                    <span>{c.mileage == null ? 'Kilometerstand niet vermeld' : `${c.mileage.toLocaleString('nl-NL')} km`}</span>
+                    <span>{c.milage == null ? 'Kilometerstand niet vermeld' : `${Number(c.milage).toLocaleString('nl-NL')} km`}</span>
                     <span>{c.transmission}</span>
                   </div>
                   <div className="car-price">{new Intl.NumberFormat('nl-NL', {
